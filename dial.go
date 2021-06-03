@@ -27,6 +27,8 @@ type DialOptions struct {
 	// http.Transport does beginning with Go 1.12.
 	HTTPClient *http.Client
 
+	HTTPBody io.Reader
+
 	// HTTPHeader specifies the HTTP headers included in the handshake request.
 	HTTPHeader http.Header
 
@@ -157,7 +159,7 @@ func handshakeRequest(ctx context.Context, urls string, opts *DialOptions, copts
 		return nil, fmt.Errorf("unexpected url scheme: %q", u.Scheme)
 	}
 
-	req, _ := http.NewRequestWithContext(ctx, "GET", u.String(), nil)
+	req, _ := http.NewRequestWithContext(ctx, "GET", u.String(), opts.HTTPBody)
 	req.Header = opts.HTTPHeader.Clone()
 	req.Header.Set("Connection", "Upgrade")
 	req.Header.Set("Upgrade", "websocket")
